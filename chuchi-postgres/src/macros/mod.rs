@@ -5,7 +5,7 @@ pub use postgres_types::{to_sql_checked, FromSql, IsNull, ToSql, Type};
 
 /// ## Example
 /// ```
-/// # use fire_postgres::try2;
+/// # use chuchi_postgres::try2;
 ///
 /// fn mul(maybe_num: Option<i32>) -> Result<Option<i32>, &'static str> {
 /// 	let x = try2!(maybe_num);
@@ -27,7 +27,7 @@ macro_rules! try2 {
 
 /// ## Example
 /// ```
-/// # use fire_postgres::try_vec;
+/// # use chuchi_postgres::try_vec;
 ///
 /// fn add(maybe_vec: Option<Vec<i32>>) -> Result<Vec<i32>, &'static str> {
 /// 	let v = try_vec!(maybe_vec);
@@ -47,7 +47,7 @@ macro_rules! try_vec {
 
 /// ## Example
 /// ```
-/// use fire_postgres::enum_u16;
+/// use chuchi_postgres::enum_u16;
 /// enum_u16! {
 /// 	#[derive(Debug)]
 /// 	pub enum SiteRaw {

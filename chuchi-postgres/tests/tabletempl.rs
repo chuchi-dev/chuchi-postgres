@@ -1,8 +1,8 @@
-use fire_postgres::enum_u16;
-use fire_postgres::row;
-use fire_postgres::row::NamedColumns;
-use fire_postgres::row::ToRowStatic;
-use fire_postgres::{FromRow, TableTempl, ToRow, UniqueId};
+use chuchi_postgres::enum_u16;
+use chuchi_postgres::row;
+use chuchi_postgres::row::NamedColumns;
+use chuchi_postgres::row::ToRowStatic;
+use chuchi_postgres::{FromRow, TableTempl, ToRow, UniqueId};
 
 #[derive(Debug, TableTempl, FromRow, ToRow)]
 pub struct Table {

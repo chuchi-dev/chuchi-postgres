@@ -1,9 +1,10 @@
 [package]
-name = "fire-postgres"
+name = "chuchi-postgres"
 description = "A wrapper around tokio-postgres to simplify working with Postgres databases."
-version = "0.3.0-beta.7"
+version = "0.1.0"
 authors = ["Sören Meier <info@soerenmeier.ch>"]
-homepage = "https://fire-lib.com/"
+homepage = "https://chuchi.dev/"
+repository = "https://github.com/chuchi-dev/chuchi-postgres"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 rust-version = "1.75"
@@ -13,10 +14,10 @@ crypto-cipher = ["crypto/cipher", "crypto/b64", "crypto/postgres"]
 crypto-signature = ["crypto/signature", "crypto/b64", "crypto/postgres"]
 crypto-token = ["crypto/b64", "crypto/postgres"]
 json = [
-	"dep:serde_json",
-	"tokio-postgres/with-serde_json-1",
-	"types/serde",
-	"types/json",
+    "dep:serde_json",
+    "tokio-postgres/with-serde_json-1",
+    "types/serde",
+    "types/json",
 ]
 email = ["dep:email_address"]
 protobuf = ["dep:fire-protobuf", "types/protobuf"]
@@ -29,20 +30,20 @@ postgres-protocol = "0.6"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", optional = true }
 chrono = "0.4.30"
-fire-postgres-derive = { version = "0.3.0-alpha.2", path = "../fire-postgres-derive" }
+chuchi-postgres-derive = { version = "0.1.0", path = "../chuchi-postgres-derive" }
 rand = "0.8"
 base64 = "0.22"
 fallible-iterator = "0.2"
 bytes = "1.0"
-crypto = { package = "fire-crypto", version = "0.4.3", optional = true }
+crypto = { package = "chuchi-crypto", version = "0.1.0", optional = true }
 email_address = { version = "0.2", optional = true }
-fire-protobuf = { version = "0.1.2", optional = true }
+fire-protobuf = { version = "0.1.0", optional = true }
 juniper = { version = "0.16", default-features = false, optional = true }
 tracing = "0.1"
 deadpool-postgres = "0.13.0"
 thiserror = "1.0.58"
-types = { package = "fire-postgres-types", version = "0.1.0-alpha.1", path = "../fire-postgres-types", features = [
-	"postgres",
+types = { package = "chuchi-postgres-types", version = "0.1.0", path = "../chuchi-postgres-types", features = [
+    "postgres",
 ] }
 deadpool = "0.12"
 futures-util = "0.3.14"

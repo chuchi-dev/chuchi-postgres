@@ -24,7 +24,7 @@ pub mod filter;
 
 pub mod migrations;
 
-pub use fire_postgres_derive::{row, FromRow, TableTempl, ToRow};
+pub use chuchi_postgres_derive::{row, FromRow, TableTempl, ToRow};
 
 pub type Result<T> = std::result::Result<T, Error>;
 

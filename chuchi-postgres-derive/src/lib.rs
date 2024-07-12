@@ -3,8 +3,8 @@ mod row;
 mod table_templ;
 mod to_row;
 
-use ::quote::quote;
 use from_row::expand_from_row;
+use quote::quote;
 
 use row::expand_row;
 use syn::parse_macro_input;
@@ -27,8 +27,8 @@ pub fn derive_table_templ(input: V1TokenStream) -> V1TokenStream {
 	let input = parse_macro_input!(input as DeriveInput);
 
 	// crate name
-	let name =
-		crate_name("fire-postgres").expect("fire-postgres not in dependencies");
+	let name = crate_name("chuchi-postgres")
+		.expect("chuchi-postgres not in dependencies");
 	let name = match name {
 		FoundCrate::Itself => quote!(crate),
 		FoundCrate::Name(n) => {
@@ -46,8 +46,8 @@ pub fn derive_from_row(input: V1TokenStream) -> V1TokenStream {
 	let input = parse_macro_input!(input as DeriveInput);
 
 	// crate name
-	let name =
-		crate_name("fire-postgres").expect("fire-postgres not in dependencies");
+	let name = crate_name("chuchi-postgres")
+		.expect("chuchi-postgres not in dependencies");
 	let name = match name {
 		FoundCrate::Itself => quote!(crate),
 		FoundCrate::Name(n) => {
@@ -65,8 +65,8 @@ pub fn derive_to_row(input: V1TokenStream) -> V1TokenStream {
 	let input = parse_macro_input!(input as DeriveInput);
 
 	// crate name
-	let name =
-		crate_name("fire-postgres").expect("fire-postgres not in dependencies");
+	let name = crate_name("chuchi-postgres")
+		.expect("chuchi-postgres not in dependencies");
 	let name = match name {
 		FoundCrate::Itself => quote!(crate),
 		FoundCrate::Name(n) => {
@@ -83,8 +83,8 @@ pub fn row(input: V1TokenStream) -> V1TokenStream {
 	let input = parse_macro_input!(input as RowInput);
 
 	// crate name
-	let name =
-		crate_name("fire-postgres").expect("fire-postgres not in dependencies");
+	let name = crate_name("chuchi-postgres")
+		.expect("chuchi-postgres not in dependencies");
 	let name = match name {
 		FoundCrate::Itself => quote!(crate),
 		FoundCrate::Name(n) => {

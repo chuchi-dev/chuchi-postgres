@@ -1,3 +1,3 @@
 [workspace]
 resolver = "2"
-members = ["fire-postgres", "fire-postgres-derive", "fire-postgres-types"]
+members = ["chuchi-postgres", "chuchi-postgres-derive", "chuchi-postgres-types"]

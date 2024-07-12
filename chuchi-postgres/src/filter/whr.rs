@@ -5,7 +5,7 @@
 /// ~ | ~= | =~ are shortcuts for LIKE
 /// ## Example
 /// ```
-/// use fire_postgres::filter;
+/// use chuchi_postgres::filter;
 /// let a = "val";
 /// let b = "val2".to_string();
 /// let c: Option<String> = None;
@@ -47,7 +47,7 @@ macro_rules! filter {
 /// ~ | ~= | =~ are shortcuts for LIKE
 /// ## Example
 /// ```
-/// use fire_postgres::whr;
+/// use chuchi_postgres::whr;
 /// let a = "val";
 /// let b = "val2".to_string();
 /// let c: Option<String> = None;

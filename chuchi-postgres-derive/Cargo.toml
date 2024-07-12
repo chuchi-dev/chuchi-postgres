@@ -1,15 +1,16 @@
 [package]
-name = "fire-postgres-derive"
-description = "Derive types for fire-postgres"
-version = "0.3.0-alpha.2"
+name = "chuchi-postgres-derive"
+description = "Derive types for chuchi-postgres"
+version = "0.1.0"
 authors = ["Sören Meier <info@soerenmeier.ch>"]
-homepage = "https://fire-lib.com/"
+homepage = "https://chuchi.dev/"
+repository = "https://github.com/chuchi-dev/chuchi-postgres"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 rust-version = "1.75"
 
 [lib]
-proc_macro = true
+proc-macro = true
 
 [dependencies]
 quote = "1.0"

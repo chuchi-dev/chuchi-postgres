@@ -7,7 +7,7 @@
 
 use crate::{connection::ConnectionOwned, filter, table::Table, Error};
 
-use fire_postgres_derive::{row, FromRow};
+use chuchi_postgres_derive::{row, FromRow};
 use tracing::debug;
 use types::time::DateTime;
 
@@ -87,8 +87,8 @@ impl Migrations {
 
 const TABLE_EXISTS: &str = "\
 SELECT EXISTS (
-	SELECT FROM information_schema.tables 
-	WHERE table_schema = 'public' 
+	SELECT FROM information_schema.tables
+	WHERE table_schema = 'public'
 	AND table_name = 'migrations'
 );";
 

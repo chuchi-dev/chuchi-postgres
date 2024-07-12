@@ -199,7 +199,7 @@ mod postgres {
 mod protobuf {
 	use super::*;
 
-	use fire_protobuf::{
+	use protopuffer::{
 		bytes::BytesWrite,
 		decode::{DecodeError, DecodeMessage, FieldKind},
 		encode::{
