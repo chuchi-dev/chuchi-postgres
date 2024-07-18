@@ -4,7 +4,7 @@ use tokio_postgres::Error as PgError;
 use tokio_postgres::NoTls;
 
 pub use deadpool::managed::TimeoutType;
-pub use deadpool_postgres::{Config, ConfigError};
+pub use deadpool_postgres::{Config as PgConfig, ConfigError};
 
 use crate::connection::ConnectionOwned;
 use crate::migrations::Migrations;
@@ -25,6 +25,54 @@ pub enum DatabaseError {
 
 	#[error("Postgres error {0}")]
 	Other(#[from] PgError),
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct Config {
+	pg_config: PgConfig,
+	migration_table: Option<String>,
+}
+
+impl Config {
+	pub fn from_pg_config(pg_config: PgConfig) -> Self {
+		Self {
+			pg_config,
+			..Default::default()
+		}
+	}
+
+	pub fn host(mut self, host: impl Into<String>) -> Self {
+		self.pg_config.host = Some(host.into());
+		self
+	}
+
+	pub fn dbname(mut self, dbname: impl Into<String>) -> Self {
+		self.pg_config.dbname = Some(dbname.into());
+		self
+	}
+
+	pub fn user(mut self, user: impl Into<String>) -> Self {
+		self.pg_config.user = Some(user.into());
+		self
+	}
+
+	pub fn password(mut self, password: impl Into<String>) -> Self {
+		self.pg_config.password = Some(password.into());
+		self
+	}
+
+	pub fn migration_table(mut self, table: impl Into<String>) -> Self {
+		self.migration_table = Some(table.into());
+		self
+	}
+
+	pub fn pg_config(&self) -> &PgConfig {
+		&self.pg_config
+	}
+
+	pub fn pg_config_mut(&mut self) -> &mut PgConfig {
+		&mut self.pg_config
+	}
 }
 
 #[derive(Debug, Clone)]
@@ -50,33 +98,30 @@ impl Database {
 		user: impl Into<String>,
 		password: impl Into<String>,
 	) -> Result<Self, DatabaseError> {
-		Self::with_cfg(Config {
-			host: Some(host.into()),
-			dbname: Some(name.into()),
-			user: Some(user.into()),
-			password: Some(password.into()),
-			..Default::default()
-		})
+		Self::with_cfg(
+			Config::default()
+				.host(host)
+				.dbname(name)
+				.user(user)
+				.password(password),
+		)
 		.await
 	}
 
 	pub async fn with_cfg(cfg: Config) -> Result<Self, DatabaseError> {
-		// cfg.manager = Some(ManagerConfig {
-		// 	recycling_method: deadpool_postgres::RecyclingMethod::Clean,
-		// });
-
-		let pool = cfg.create_pool(Some(Runtime::Tokio1), NoTls).map_err(
-			|e| match e {
+		let pool = cfg
+			.pg_config
+			.create_pool(Some(Runtime::Tokio1), NoTls)
+			.map_err(|e| match e {
 				CreatePoolError::Config(e) => DatabaseError::Config(e),
 				CreatePoolError::Build(_) => unreachable!(
 					"since we provide a runtime this should never happen"
 				),
-			},
-		)?;
+			})?;
 
 		let this = Self {
 			pool,
-			migrations: Migrations::new(),
+			migrations: Migrations::new(cfg.migration_table),
 		};
 
 		// just make sure the connection worked

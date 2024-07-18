@@ -5,6 +5,8 @@
 //! A migration is an sql script which can be executed on the database
 //! this script is only executed once and then stored in the database.
 
+use std::borrow::Cow;
+
 use crate::{connection::ConnectionOwned, filter, table::Table, Error};
 
 use chuchi_postgres_derive::{row, FromRow};
@@ -26,9 +28,11 @@ pub struct Migrations {
 
 impl Migrations {
 	/// Create a new Migrations
-	pub(super) fn new() -> Self {
+	pub(super) fn new(table_name: Option<String>) -> Self {
 		Self {
-			table: Table::new("migrations"),
+			table: Table::new(
+				table_name.map(Cow::Owned).unwrap_or("migrations".into()),
+			),
 		}
 	}
 
@@ -38,12 +42,19 @@ impl Migrations {
 	) -> Result<(), Error> {
 		let db = db.transaction().await?;
 		let conn = db.connection();
+
+		// replace migrations with the correct table name
+		let table_exists =
+			TABLE_EXISTS.replace("migrations", self.table.name());
+
 		// check if the migrations table exists
 		let [result] =
-			conn.query_one::<[bool; 1], _>(TABLE_EXISTS, &[]).await?;
+			conn.query_one::<[bool; 1], _>(&table_exists, &[]).await?;
 
 		if !result {
-			conn.batch_execute(CREATE_TABLE).await?;
+			let create_table =
+				CREATE_TABLE.replace("migrations", self.table.name());
+			conn.batch_execute(&create_table).await?;
 		}
 
 		db.commit().await?;
