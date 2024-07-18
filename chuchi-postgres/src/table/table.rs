@@ -16,6 +16,10 @@ impl Table {
 		Self { name: name.into() }
 	}
 
+	pub fn name(&self) -> &str {
+		self.name.as_ref()
+	}
+
 	pub fn with_conn<'a>(&'a self, conn: Connection<'a>) -> TableWithConn<'a> {
 		TableWithConn { table: &self, conn }
 	}
@@ -103,5 +107,9 @@ impl TableWithConn<'_> {
 		filter: impl Borrow<WhereFilter<'_>>,
 	) -> Result<(), Error> {
 		self.conn.delete(self.name(), filter).await
+	}
+
+	pub fn conn(&self) -> &Connection<'_> {
+		&self.conn
 	}
 }
