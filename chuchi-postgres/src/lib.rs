@@ -9,6 +9,8 @@ pub mod connection;
 pub use connection::Connection;
 pub use connection::Error;
 
+pub mod db;
+
 pub mod row;
 pub use row::Row;
 

@@ -27,6 +27,29 @@ pub enum DatabaseError {
 	Other(#[from] PgError),
 }
 
+#[cfg(feature = "chuchi")]
+mod impl_chuchi {
+	use std::error::Error as StdError;
+
+	use super::*;
+	use chuchi::error::{ErrorKind, ServerErrorKind};
+
+	impl chuchi::extractor::ExtractorError for DatabaseError {
+		fn error_kind(&self) -> ErrorKind {
+			ErrorKind::Server(ServerErrorKind::InternalServerError)
+		}
+
+		fn into_std(self) -> Box<dyn StdError + Send + Sync> {
+			Box::new(self)
+		}
+	}
+}
+
+/// Configuration builder
+///
+/// This allows to configure a database.
+///
+/// For full flexibility use `from_pg_config`.
 #[derive(Clone, Debug, Default)]
 pub struct Config {
 	pg_config: PgConfig,
@@ -34,6 +57,7 @@ pub struct Config {
 }
 
 impl Config {
+	/// Creates a config using the given `PgConfig`.
 	pub fn from_pg_config(pg_config: PgConfig) -> Self {
 		Self {
 			pg_config,
@@ -41,40 +65,50 @@ impl Config {
 		}
 	}
 
+	/// Set's the host.
 	pub fn host(mut self, host: impl Into<String>) -> Self {
 		self.pg_config.host = Some(host.into());
 		self
 	}
 
+	/// Set's the database name.
 	pub fn dbname(mut self, dbname: impl Into<String>) -> Self {
 		self.pg_config.dbname = Some(dbname.into());
 		self
 	}
 
+	/// Set's the user.
 	pub fn user(mut self, user: impl Into<String>) -> Self {
 		self.pg_config.user = Some(user.into());
 		self
 	}
 
+	/// Set's the password.
 	pub fn password(mut self, password: impl Into<String>) -> Self {
 		self.pg_config.password = Some(password.into());
 		self
 	}
 
+	/// Set's the migration table name, by default it is `migrations`.
 	pub fn migration_table(mut self, table: impl Into<String>) -> Self {
 		self.migration_table = Some(table.into());
 		self
 	}
 
+	/// Get's a reference to the `PgConfig`.
 	pub fn pg_config(&self) -> &PgConfig {
 		&self.pg_config
 	}
 
+	/// Get's a mutable reference to the `PgConfig`.
 	pub fn pg_config_mut(&mut self) -> &mut PgConfig {
 		&mut self.pg_config
 	}
 }
 
+/// Database Type
+///
+/// Contains a connection pool and a migration manager
 #[derive(Debug, Clone)]
 pub struct Database {
 	pool: Pool,
@@ -108,6 +142,7 @@ impl Database {
 		.await
 	}
 
+	/// Create a new database with a custom configuration.
 	pub async fn with_cfg(cfg: Config) -> Result<Self, DatabaseError> {
 		let pool = cfg
 			.pg_config
@@ -132,6 +167,7 @@ impl Database {
 		Ok(this)
 	}
 
+	/// Get a connection from the pool.
 	pub async fn get(&self) -> Result<ConnectionOwned, DatabaseError> {
 		self.pool
 			.get()
@@ -148,11 +184,15 @@ impl Database {
 			.map(ConnectionOwned)
 	}
 
+	/// Get the migrations.
 	pub fn migrations(&self) -> Migrations {
 		self.migrations.clone()
 	}
 
 	/// Get a table from the database
+	///
+	/// ## Note
+	/// This might be removed in the next version.
 	pub fn table_owned<T>(&self, name: &'static str) -> TableOwned<T>
 	where
 		T: TableTemplate,

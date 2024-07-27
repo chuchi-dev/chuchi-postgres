@@ -87,6 +87,37 @@ impl ConnectionOwned {
 	}
 }
 
+#[cfg(feature = "chuchi")]
+mod impl_chuchi {
+	use chuchi::{
+		extractor::Extractor, extractor_extract, extractor_prepare,
+		extractor_validate,
+	};
+
+	use crate::{database::DatabaseError, Database};
+
+	use super::*;
+
+	impl<'a, R> Extractor<'a, R> for ConnectionOwned {
+		type Error = DatabaseError;
+		type Prepared = Self;
+
+		extractor_validate!(|validate| {
+			assert!(
+				validate.resources.exists::<Database>(),
+				"Db resource not found"
+			);
+		});
+
+		extractor_prepare!(|prepare| {
+			let db = prepare.resources.get::<Database>().unwrap();
+			db.get().await
+		});
+
+		extractor_extract!(|extract| { Ok(extract.prepared) });
+	}
+}
+
 #[derive(Debug)]
 pub struct Transaction<'a> {
 	inner: deadpool_postgres::Transaction<'a>,
