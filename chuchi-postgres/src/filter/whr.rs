@@ -71,6 +71,16 @@ macro_rules! whr {
 macro_rules! filter_inner {
 	($f:ident,) => ();
 
+	// nested
+	($f:ident, ($($tt:tt)+) $($rest:tt)*) => ({
+		// we need to swap the where
+		let mut prev_where = std::mem::take(&mut $f.whr);
+		$crate::filter_inner!($f, $($tt)*);
+		std::mem::swap(&mut $f.whr, &mut prev_where);
+		$f.whr.push($crate::filter::WherePart::Nested(prev_where));
+		$crate::whr_log!($f, $($rest)*);
+	});
+
 	// reference ident eq
 	($f:ident, &$id:ident $($tt:tt)*) => (
 		$crate::whr_comp!($f, stringify!($id), Eq, &$id $($tt)*);
@@ -344,6 +354,20 @@ mod tests {
 		let limit = 10;
 		let query = filter!(id LIMIT &limit);
 		assert_eq!(query.to_string(), " WHERE \"id\" = $1 LIMIT $2");
+	}
+
+	#[test]
+	fn test_and_or() {
+		let user_id = &UniqueId::new();
+		let id1 = &UniqueId::new();
+		let id2 = &UniqueId::new();
+		let id3 = &UniqueId::new();
+		let query =
+			filter!(user_id AND ("id" != &id1 OR "id" = &id2) OR "id" = &id3);
+		assert_eq!(
+			query.to_string(),
+			r#" WHERE "user_id" = $1 AND ("id" != $2 OR "id" = $3) OR "id" = $4"#
+		);
 	}
 
 	// #[test]

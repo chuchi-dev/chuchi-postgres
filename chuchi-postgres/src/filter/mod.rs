@@ -109,16 +109,18 @@ impl fmt::Display for WhereFilter<'_> {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Where {
 	inner: Vec<WherePart>,
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum WherePart {
 	Operation(WhereOperation),
 	And,
 	Or,
+	Nested(Where),
 }
 
 #[derive(Debug)]
@@ -128,6 +130,7 @@ pub struct WhereOperation {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Operator {
 	Eq,
 	Ne,
@@ -145,6 +148,7 @@ pub enum Operator {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum WhereIdent {
 	Param,
 	Name(Cow<'static, str>),
@@ -183,20 +187,25 @@ pub(crate) struct WhereFormatter<'a> {
 	pub param_start: usize,
 }
 
-impl<'a> fmt::Display for WhereFormatter<'a> {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		if self.whr.is_empty() {
-			return Ok(());
-		}
-
-		f.write_str(" WHERE ")?;
-
+impl<'a> WhereFormatter<'a> {
+	/// you need to print " WHERE " before calling this
+	fn fmt_inner(
+		&self,
+		f: &mut fmt::Formatter<'_>,
+	) -> Result<usize, fmt::Error> {
 		let mut param_num = self.param_start;
 
 		for part in &self.whr.inner {
 			match part {
 				WherePart::And => f.write_str(" AND ")?,
 				WherePart::Or => f.write_str(" OR ")?,
+				WherePart::Nested(inner) => {
+					let mut inner = inner.to_formatter();
+					inner.param_start = param_num;
+					f.write_str("(")?;
+					param_num = inner.fmt_inner(f)?;
+					f.write_str(")")?;
+				}
 				WherePart::Operation(op) => match &op.kind {
 					Operator::IsNull | Operator::IsNotNull => {
 						write!(f, "\"{}\" {}", op.column, op.kind.as_str())?;
@@ -234,6 +243,20 @@ impl<'a> fmt::Display for WhereFormatter<'a> {
 				},
 			}
 		}
+
+		Ok(param_num)
+	}
+}
+
+impl<'a> fmt::Display for WhereFormatter<'a> {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		if self.whr.is_empty() {
+			return Ok(());
+		}
+
+		f.write_str(" WHERE ")?;
+
+		self.fmt_inner(f)?;
 
 		Ok(())
 	}
