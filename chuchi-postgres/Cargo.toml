@@ -1,7 +1,7 @@
 [package]
 name = "chuchi-postgres"
 description = "A wrapper around tokio-postgres to simplify working with Postgres databases."
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Sören Meier <info@soerenmeier.ch>"]
 homepage = "https://chuchi.dev/"
 repository = "https://github.com/chuchi-dev/chuchi-postgres"
@@ -45,6 +45,7 @@ deadpool-postgres = "0.13.0"
 thiserror = "1.0.58"
 types = { package = "chuchi-postgres-types", version = "0.1.0", path = "../chuchi-postgres-types", features = [
 	"postgres",
+	"serde",
 ] }
 deadpool = "0.12"
 futures-util = "0.3.14"
