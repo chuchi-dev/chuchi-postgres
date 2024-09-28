@@ -256,9 +256,7 @@ impl Connection<'_> {
 		filter: impl Borrow<Filter<'_>>,
 	) -> Result<u32, Error> {
 		let sql = format!(
-			"SELECT COUNT(\"{}\") FROM \"{}\"{}",
-			table,
-			column,
+			"SELECT COUNT(\"{column}\") FROM \"{table}\"{}",
 			filter.borrow()
 		);
 		let stmt = self.prepare_cached(&sql).await?;
