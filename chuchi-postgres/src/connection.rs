@@ -254,7 +254,7 @@ impl Connection<'_> {
 		table: &str,
 		column: &str,
 		filter: impl Borrow<Filter<'_>>,
-	) -> Result<u32, Error> {
+	) -> Result<u64, Error> {
 		let sql = format!(
 			"SELECT COUNT(\"{column}\") FROM \"{table}\"{}",
 			filter.borrow()
@@ -266,7 +266,7 @@ impl Connection<'_> {
 			.await
 			.and_then(|opt| opt.ok_or(Error::ExpectedOneRow))?;
 
-		Ok(row.get(0))
+		Ok(row.get::<_, i64>(0) as u64)
 	}
 
 	// insert one

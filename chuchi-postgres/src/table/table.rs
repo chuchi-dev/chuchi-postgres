@@ -71,7 +71,7 @@ impl TableWithConn<'_> {
 		&self,
 		column: &str,
 		filter: impl Borrow<Filter<'_>>,
-	) -> Result<u32, Error> {
+	) -> Result<u64, Error> {
 		self.conn.count(self.name(), column, filter).await
 	}
 

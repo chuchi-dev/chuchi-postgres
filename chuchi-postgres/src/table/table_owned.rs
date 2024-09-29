@@ -144,7 +144,7 @@ where
 		&self,
 		column: &str,
 		filter: impl Borrow<Filter<'_>>,
-	) -> Result<u32> {
+	) -> Result<u64> {
 		self.get_connection()
 			.await?
 			.connection()
