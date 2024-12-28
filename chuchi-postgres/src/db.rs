@@ -120,4 +120,26 @@ impl<'a> Trans<'a> {
 			pg: self.pg.as_ref().map(|pg| pg.connection()),
 		}
 	}
+
+	/// Commit the transaction.
+	///
+	/// ## Note
+	/// Does nothing if it contains a memory Conn
+	pub async fn commit(self) -> Result<(), Error> {
+		match self.pg {
+			Some(pg) => pg.commit().await,
+			None => Ok(()),
+		}
+	}
+
+	/// Rollback the transaction.
+	///
+	/// ## Panics
+	/// If the transaction is not set / this is a memory Conn
+	pub async fn rollback(self) -> Result<(), Error> {
+		match self.pg {
+			Some(pg) => pg.commit().await,
+			None => panic!("rollback not supported"),
+		}
+	}
 }
