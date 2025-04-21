@@ -242,7 +242,7 @@ dependencies = [
 
 [[package]]
 name = "chuchi-postgres"
-version = "0.2.0-alpha.1"
+version = "0.2.0"
 dependencies = [
  "base64 0.22.1",
  "bytes",
