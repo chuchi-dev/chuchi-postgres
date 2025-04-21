@@ -11,8 +11,8 @@ use std::{
 use futures_util::Stream;
 use pin_project_lite::pin_project;
 use postgres_types::{FromSql, ToSql};
-use tokio_postgres::row::RowIndex;
 pub use tokio_postgres::Column;
+use tokio_postgres::row::RowIndex;
 
 use crate::connection::Error;
 

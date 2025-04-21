@@ -6,12 +6,12 @@ use std::fmt::Write;
 use deadpool_postgres::Metrics;
 use deadpool_postgres::{ClientWrapper, Object};
 
-use futures_util::pin_mut;
 use futures_util::StreamExt;
 use futures_util::TryStreamExt;
+use futures_util::pin_mut;
 use postgres_types::{BorrowToSql, ToSql, Type};
-use tokio_postgres::error::SqlState;
 use tokio_postgres::Error as PgError;
+use tokio_postgres::error::SqlState;
 
 pub use deadpool::managed::TimeoutType;
 pub use deadpool_postgres::{Config, ConfigError};
@@ -19,6 +19,7 @@ use tokio_postgres::Statement;
 use tokio_postgres::ToStatement;
 use tracing::error;
 
+use crate::Row;
 use crate::filter::Filter;
 use crate::filter::Limit;
 use crate::filter::WhereFilter;
@@ -27,7 +28,6 @@ use crate::row::RowStream;
 use crate::row::ToRowStatic;
 use crate::row::{FromRowOwned, ToRow};
 use crate::try2;
-use crate::Row;
 
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
@@ -94,7 +94,7 @@ mod impl_chuchi {
 		extractor_validate,
 	};
 
-	use crate::{database::DatabaseError, Database};
+	use crate::{Database, database::DatabaseError};
 
 	use super::*;
 

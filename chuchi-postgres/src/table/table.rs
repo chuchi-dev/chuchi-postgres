@@ -1,9 +1,9 @@
 use std::borrow::{Borrow, Cow};
 
 use crate::{
+	Connection, Error,
 	filter::{Filter, WhereFilter},
 	row::{FromRowOwned, NamedColumns, ToRow, ToRowStatic},
-	Connection, Error,
 };
 
 #[derive(Debug, Clone)]

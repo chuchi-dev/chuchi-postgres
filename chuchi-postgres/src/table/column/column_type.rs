@@ -93,7 +93,7 @@ mod impl_serde {
 	use super::*;
 
 	use postgres_types::Json;
-	use serde::{de::DeserializeOwned, Serialize};
+	use serde::{Serialize, de::DeserializeOwned};
 
 	impl<T> ColumnType for Json<T>
 	where

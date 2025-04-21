@@ -9,7 +9,7 @@ use crate::connection::ConnectionOwned;
 use crate::database::DatabaseError;
 use crate::filter::{Filter, WhereFilter};
 use crate::row::ToRow;
-use crate::{filter, Database, Error, Result};
+use crate::{Database, Error, Result, filter};
 
 use std::borrow::Borrow;
 use std::marker::PhantomData;

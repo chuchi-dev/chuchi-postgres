@@ -1,7 +1,7 @@
 #[doc(hidden)]
 pub use bytes::BytesMut;
 #[doc(hidden)]
-pub use postgres_types::{to_sql_checked, FromSql, IsNull, ToSql, Type};
+pub use postgres_types::{FromSql, IsNull, ToSql, Type, to_sql_checked};
 
 /// ## Example
 /// ```

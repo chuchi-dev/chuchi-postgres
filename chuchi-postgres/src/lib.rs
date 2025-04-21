@@ -15,7 +15,6 @@ pub mod row;
 pub use row::Row;
 
 pub mod table;
-// pub use table::Table;
 
 #[cfg(feature = "json")]
 pub use types::json;
@@ -26,7 +25,7 @@ pub mod filter;
 
 pub mod migrations;
 
-pub use chuchi_postgres_derive::{row, FromRow, TableTempl, ToRow};
+pub use chuchi_postgres_derive::{FromRow, TableTempl, ToRow, row};
 
 pub type Result<T> = std::result::Result<T, Error>;
 

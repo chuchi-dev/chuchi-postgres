@@ -8,13 +8,13 @@
 use std::borrow::Cow;
 
 use crate::{
+	Error,
 	connection::{Connection, ConnectionOwned},
 	filter,
 	table::Table,
-	Error,
 };
 
-use chuchi_postgres_derive::{row, FromRow};
+use chuchi_postgres_derive::{FromRow, row};
 use tracing::debug;
 use types::time::DateTime;
 

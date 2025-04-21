@@ -1,7 +1,7 @@
 use crate::{
+	Connection, Database, Error,
 	connection::{ConnectionOwned, Transaction},
 	database::DatabaseError,
-	Connection, Database, Error,
 };
 
 /// This might contain a database or none.
