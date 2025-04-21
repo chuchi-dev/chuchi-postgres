@@ -7,7 +7,7 @@ homepage = "https://chuchi.dev/"
 repository = "https://github.com/chuchi-dev/chuchi-postgres"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-rust-version = "1.75"
+rust-version = "1.74"
 
 [features]
 crypto-cipher = ["crypto/cipher", "crypto/b64", "crypto/postgres"]
@@ -47,7 +47,7 @@ types = { package = "chuchi-postgres-types", version = "0.1.0", path = "../chuch
 	"postgres",
 	"serde",
 ] }
-deadpool = "0.12"
+deadpool = "0.11"
 futures-util = "0.3.14"
 pin-project-lite = "0.2.14"
 chuchi = { version = "0.1", optional = true }
