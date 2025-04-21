@@ -1,13 +1,13 @@
 [package]
 name = "chuchi-postgres"
 description = "A wrapper around tokio-postgres to simplify working with Postgres databases."
-version = "0.1.7"
+version = "0.2.0"
 authors = ["Sören Meier <info@soerenmeier.ch>"]
 homepage = "https://chuchi.dev/"
 repository = "https://github.com/chuchi-dev/chuchi-postgres"
-edition = "2021"
+edition = "2024"
 license = "MIT OR Apache-2.0"
-rust-version = "1.75"
+rust-version = "1.85"
 
 [features]
 crypto-cipher = ["crypto/cipher", "crypto/b64", "crypto/postgres"]
@@ -34,20 +34,19 @@ chrono = "0.4.30"
 chuchi-postgres-derive = { version = "0.1.0", path = "../chuchi-postgres-derive" }
 rand = "0.8"
 base64 = "0.22"
-fallible-iterator = "0.2"
 bytes = "1.0"
 crypto = { package = "chuchi-crypto", version = "0.1.0", optional = true }
 email_address = { version = "0.2", optional = true }
 fire-protobuf = { version = "0.1.0", optional = true }
 juniper = { version = "0.16", default-features = false, optional = true }
 tracing = "0.1"
-deadpool-postgres = "0.13.0"
+deadpool-postgres = "0.14.0"
 thiserror = "1.0.58"
 types = { package = "chuchi-postgres-types", version = "0.1.0", path = "../chuchi-postgres-types", features = [
 	"postgres",
 	"serde",
 ] }
-deadpool = "0.11"
+deadpool = "0.12"
 futures-util = "0.3.14"
 pin-project-lite = "0.2.14"
 chuchi = { version = "0.1", optional = true }
