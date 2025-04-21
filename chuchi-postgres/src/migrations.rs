@@ -7,7 +7,12 @@
 
 use std::borrow::Cow;
 
-use crate::{connection::ConnectionOwned, filter, table::Table, Error};
+use crate::{
+	connection::{Connection, ConnectionOwned},
+	filter,
+	table::Table,
+	Error,
+};
 
 use chuchi_postgres_derive::{row, FromRow};
 use tracing::debug;
@@ -70,12 +75,10 @@ impl Migrations {
 	) -> Result<(), Error> {
 		let trans = conn.transaction().await?;
 		let conn = trans.connection();
-		let table = self.table.with_conn(conn);
 
 		// check if the migration was already executed
-		let existing: Option<ExecutedMigration> =
-			table.select_opt(filter!(&name)).await?;
-		if let Some(mig) = existing {
+		let executed = self.get(conn, name).await?;
+		if let Some(mig) = executed {
 			debug!("migration {} was executed at {}", name, mig.datetime);
 			return Ok(());
 		}
@@ -83,14 +86,37 @@ impl Migrations {
 		// else execute it
 		conn.batch_execute(&sql).await?;
 
+		self.set(conn, name).await?;
+
+		trans.commit().await?;
+
+		Ok(())
+	}
+
+	pub async fn get(
+		&self,
+		conn: Connection<'_>,
+		name: &str,
+	) -> Result<Option<ExecutedMigration>, Error> {
+		let table = self.table.with_conn(conn);
+
+		// check if the migration was already executed
+		table.select_opt(filter!(&name)).await
+	}
+
+	pub async fn set(
+		&self,
+		conn: Connection<'_>,
+		name: &str,
+	) -> Result<(), Error> {
+		let table = self.table.with_conn(conn);
+
 		table
 			.insert(row! {
 				name,
 				"datetime": DateTime::now(),
 			})
 			.await?;
-
-		trans.commit().await?;
 
 		Ok(())
 	}

@@ -7,7 +7,7 @@ homepage = "https://chuchi.dev/"
 repository = "https://github.com/chuchi-dev/chuchi-postgres"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-rust-version = "1.74"
+rust-version = "1.75"
 
 [features]
 crypto-cipher = ["crypto/cipher", "crypto/b64", "crypto/postgres"]
