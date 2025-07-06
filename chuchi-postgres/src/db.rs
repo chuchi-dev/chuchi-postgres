@@ -1,3 +1,42 @@
+//! Database module
+//!
+//! ## Axum
+//! If you wan't to use axum the best way is to make a small wrapper around
+//! ConnOwned.
+//!
+//! ```rust
+//! pub struct ConnOwned(pub pg::db::ConnOwned);
+//!
+//! impl ConnOwned {
+//! 	pub fn conn(&self) -> Conn {
+//! 		self.0.conn()
+//! 	}
+//!
+//! 	pub async fn trans(&mut self) -> Result<Trans, pg::Error> {
+//! 		self.0.trans().await
+//! 	}
+//! }
+//!
+//! impl<S> FromRequestParts<S> for ConnOwned
+//! where
+//! 	S: Send + Sync,
+//! 	Db: FromRef<S>,
+//! {
+//! 	type Rejection = Error;
+//!
+//! 	async fn from_request_parts(
+//! 		_parts: &mut Parts,
+//! 		state: &S,
+//! 	) -> Result<Self, Self::Rejection> {
+//! 		let db = Db::from_ref(state);
+//! 		db.get()
+//! 			.await
+//! 			.map(Self)
+//! 			.map_err(|e| Error::Internal(e.to_string()))
+//! 	}
+//! }
+//! ```
+
 use crate::{
 	Connection, Database, Error,
 	connection::{ConnectionOwned, Transaction},
@@ -49,7 +88,6 @@ impl ConnOwned {
 	}
 
 	// or transaction
-	#[allow(dead_code)]
 	pub async fn trans(&mut self) -> Result<Trans, Error> {
 		match &mut self.pg {
 			Some(pg) => Ok(Trans {
