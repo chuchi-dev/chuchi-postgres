@@ -4,7 +4,12 @@
 //! If you wan't to use axum the best way is to make a small wrapper around
 //! ConnOwned.
 //!
-//! ```rust
+//! ```ignore
+//! use chuchi_postgres as pg;
+//! use pg::db::{Conn, Trans, Db};
+//! use axum::extract::{FromRequestParts, FromRef};
+//! use axum::http::request::Parts;
+//!
 //! pub struct ConnOwned(pub pg::db::ConnOwned);
 //!
 //! impl ConnOwned {
@@ -22,7 +27,7 @@
 //! 	S: Send + Sync,
 //! 	Db: FromRef<S>,
 //! {
-//! 	type Rejection = Error;
+//! 	type Rejection = MyError;
 //!
 //! 	async fn from_request_parts(
 //! 		_parts: &mut Parts,
@@ -32,7 +37,7 @@
 //! 		db.get()
 //! 			.await
 //! 			.map(Self)
-//! 			.map_err(|e| Error::Internal(e.to_string()))
+//! 			.map_err(|e| MyError::Internal(e.to_string()))
 //! 	}
 //! }
 //! ```
