@@ -86,14 +86,14 @@ pub struct ConnOwned {
 
 impl ConnOwned {
 	// connection
-	pub fn conn(&self) -> Conn {
+	pub fn conn(&self) -> Conn<'_> {
 		Conn {
 			pg: self.pg.as_ref().map(|pg| pg.connection()),
 		}
 	}
 
 	// or transaction
-	pub async fn trans(&mut self) -> Result<Trans, Error> {
+	pub async fn trans(&mut self) -> Result<Trans<'_>, Error> {
 		match &mut self.pg {
 			Some(pg) => Ok(Trans {
 				pg: Some(pg.transaction().await?),
@@ -158,7 +158,7 @@ pub struct Trans<'a> {
 
 impl<'a> Trans<'a> {
 	/// Get the connection of the transaction.
-	pub fn conn(&self) -> Conn {
+	pub fn conn(&self) -> Conn<'_> {
 		Conn {
 			pg: self.pg.as_ref().map(|pg| pg.connection()),
 		}
