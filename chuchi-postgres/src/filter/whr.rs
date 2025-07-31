@@ -370,6 +370,18 @@ mod tests {
 		);
 	}
 
+	#[test]
+	fn test_filter_add_where() {
+		let id1 = UniqueId::new();
+		let id2 = Some(UniqueId::new());
+		let mut filter = filter!(&id1);
+		if let Some(id2) = &id2 {
+			filter.and_where(whr!(id2));
+		}
+
+		assert_eq!(filter.to_string(), r#" WHERE "id1" = $1 AND "id2" = $2"#);
+	}
+
 	// #[test]
 	// fn test_order() {
 	// 	let id = &UniqueId::new();

@@ -30,6 +30,18 @@ impl<'a> Filter<'a> {
 		}
 	}
 
+	pub fn and_where(&mut self, whr: WhereFilter<'a>) {
+		self.whr.push(WherePart::And);
+		self.whr.append(whr.whr);
+		self.params.append(whr.params);
+	}
+
+	pub fn or_where(&mut self, whr: WhereFilter<'a>) {
+		self.whr.push(WherePart::Or);
+		self.whr.append(whr.whr);
+		self.params.append(whr.params);
+	}
+
 	pub(crate) fn to_formatter(&'a self) -> FilterFormatter<'a> {
 		FilterFormatter {
 			whr: &self.whr,
@@ -161,6 +173,10 @@ impl Where {
 
 	pub fn push(&mut self, part: impl Into<WherePart>) {
 		self.inner.push(part.into());
+	}
+
+	fn append(&mut self, other: Where) {
+		self.inner.extend(other.inner);
 	}
 
 	fn is_empty(&self) -> bool {
@@ -405,6 +421,10 @@ impl<'a> Params<'a> {
 		&self,
 	) -> impl ExactSizeIterator<Item = &(dyn ToSql + Sync)> {
 		self.inner.iter().map(|p| p.data.as_ref())
+	}
+
+	fn append(&mut self, other: Params<'a>) {
+		self.inner.extend(other.inner);
 	}
 }
 
