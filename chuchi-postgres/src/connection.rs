@@ -49,6 +49,12 @@ pub enum Error {
 	Unknown(Box<dyn std::error::Error + Send + Sync>),
 }
 
+impl Error {
+	pub fn unique_violation(constraint: Option<String>) -> Self {
+		Self::UniqueViolation { constraint }
+	}
+}
+
 impl From<PgError> for Error {
 	fn from(e: PgError) -> Self {
 		let Some(db_error) = e.as_db_error() else {
