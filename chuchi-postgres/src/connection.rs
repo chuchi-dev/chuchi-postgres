@@ -32,8 +32,9 @@ use crate::try2;
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 pub enum Error {
-	#[error("Unique violation {0}")]
-	UniqueViolation(PgError),
+	#[error("Unique violation {constraint:?}")]
+	#[non_exhaustive]
+	UniqueViolation { constraint: Option<String> },
 
 	#[error("Expected one row")]
 	ExpectedOneRow,
@@ -50,12 +51,14 @@ pub enum Error {
 
 impl From<PgError> for Error {
 	fn from(e: PgError) -> Self {
-		let Some(state) = e.code() else {
+		let Some(db_error) = e.as_db_error() else {
 			return Self::Other(e);
 		};
 
-		match state {
-			&SqlState::UNIQUE_VIOLATION => Self::UniqueViolation(e),
+		match db_error.code() {
+			&SqlState::UNIQUE_VIOLATION => Self::UniqueViolation {
+				constraint: db_error.constraint().map(Into::into),
+			},
 			state => {
 				error!("db error with state {:?}", state);
 				Self::Other(e)
