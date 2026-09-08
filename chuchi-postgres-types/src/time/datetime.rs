@@ -12,8 +12,8 @@ use chrono::offset::TimeZone;
 /// A DateTime in the utc timezone
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 // graphql
-#[cfg_attr(feature = "juniper", derive(juniper::GraphQLScalar))]
-#[cfg_attr(feature = "juniper", graphql(with = graphql))]
+#[cfg_attr(feature = "juniper_0_17", derive(juniper::GraphQLScalar))]
+#[cfg_attr(feature = "juniper_0_17", graphql(with = graphql))]
 pub struct DateTime(chrono::DateTime<Utc>);
 
 impl DateTime {
@@ -257,7 +257,7 @@ mod protobuf {
 	}
 }
 
-#[cfg(feature = "juniper")]
+#[cfg(feature = "juniper_0_17")]
 mod graphql {
 	use super::*;
 

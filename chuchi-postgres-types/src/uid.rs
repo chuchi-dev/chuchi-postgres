@@ -13,8 +13,8 @@ use base64::engine::{Engine, general_purpose::URL_SAFE_NO_PAD};
 /// - 5..10 are random
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 // graphql
-#[cfg_attr(feature = "juniper", derive(juniper::GraphQLScalar))]
-#[cfg_attr(feature = "juniper", graphql(with = graphql))]
+#[cfg_attr(feature = "juniper_0_17", derive(juniper::GraphQLScalar))]
+#[cfg_attr(feature = "juniper_0_17", graphql(with = graphql))]
 pub struct UniqueId([u8; 10]);
 
 impl UniqueId {
@@ -244,7 +244,7 @@ mod protobuf {
 	}
 }
 
-#[cfg(feature = "juniper")]
+#[cfg(feature = "juniper_0_17")]
 mod graphql {
 	use super::*;
 

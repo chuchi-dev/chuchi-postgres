@@ -13,8 +13,8 @@ use chrono::{TimeZone, Utc};
 /// A date in utc
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 // graphql
-#[cfg_attr(feature = "juniper", derive(juniper::GraphQLScalar))]
-#[cfg_attr(feature = "juniper", graphql(with = graphql))]
+#[cfg_attr(feature = "juniper_0_17", derive(juniper::GraphQLScalar))]
+#[cfg_attr(feature = "juniper_0_17", graphql(with = graphql))]
 pub struct Date(chrono::NaiveDate);
 
 impl Date {
@@ -262,7 +262,7 @@ mod protobuf {
 	}
 }
 
-#[cfg(feature = "juniper")]
+#[cfg(feature = "juniper_0_17")]
 mod graphql {
 	use super::*;
 

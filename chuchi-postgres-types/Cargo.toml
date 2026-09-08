@@ -1,7 +1,7 @@
 [package]
 name = "chuchi-postgres-types"
 description = "Common types when working with Postgres in Rust"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Sören Meier <info@soerenmeier.ch>"]
 homepage = "https://chuchi.dev/"
 repository = "https://github.com/chuchi-dev/chuchi-postgres"
