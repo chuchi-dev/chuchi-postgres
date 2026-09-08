@@ -111,12 +111,12 @@ impl Migrations {
 	) -> Result<(), Error> {
 		let table = self.table.with_conn(conn);
 
-		table
-			.insert(row! {
-				name,
-				"datetime": DateTime::now(),
-			})
-			.await?;
+		let row = row! {
+			name,
+			"datetime": DateTime::now(),
+		};
+
+		table.insert(row).await?;
 
 		Ok(())
 	}
