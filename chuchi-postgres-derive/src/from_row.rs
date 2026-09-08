@@ -2,7 +2,7 @@ use std::fmt::Write;
 
 use ::quote::{quote, ToTokens};
 
-use syn::{DeriveInput, Error};
+use syn::{DeriveInput, Error, GenericParam};
 use syn::{Fields, FieldsNamed, FieldsUnnamed};
 use syn::{Lifetime, LifetimeParam};
 
@@ -37,9 +37,9 @@ pub fn expand_from_row(
 					first_lifetime.lifetime.clone()
 				} else {
 					let lifetime = Lifetime::new("'r", Span::call_site());
-					n_gens
-						.params
-						.push(LifetimeParam::new(lifetime.clone()).into());
+					n_gens.params.push(GenericParam::Lifetime(
+						LifetimeParam::new(lifetime.clone()),
+					));
 
 					lifetime
 				};

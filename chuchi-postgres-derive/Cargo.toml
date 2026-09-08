@@ -1,19 +1,19 @@
 [package]
 name = "chuchi-postgres-derive"
 description = "Derive types for chuchi-postgres"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Sören Meier <info@soerenmeier.ch>"]
 homepage = "https://chuchi.dev/"
 repository = "https://github.com/chuchi-dev/chuchi-postgres"
-edition = "2021"
+edition = "2024"
 license = "MIT OR Apache-2.0"
-rust-version = "1.74"
+rust-version = "1.85"
 
 [lib]
 proc-macro = true
 
 [dependencies]
 quote = "1.0"
-syn = { version = "2.0", features = ["extra-traits"] }
+syn = { version = "3.0", features = ["extra-traits"] }
 proc-macro2 = "1.0"
 proc-macro-crate = "3.1"
