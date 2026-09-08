@@ -2,9 +2,8 @@ use std::fmt;
 use std::str::FromStr;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use base64::engine::{general_purpose::URL_SAFE_NO_PAD, Engine};
 use base64::DecodeError;
-use rand::{rngs::OsRng, RngCore};
+use base64::engine::{Engine, general_purpose::URL_SAFE_NO_PAD};
 
 /// A UniqueId that can be used within a database.
 /// Is not cryptographically secure and could be bruteforced.
@@ -29,7 +28,7 @@ impl UniqueId {
 		let mut bytes = [0u8; 10];
 		bytes[..5].copy_from_slice(&secs_bytes[3..8]);
 
-		OsRng.fill_bytes(&mut bytes[5..]);
+		rand::fill(&mut bytes[5..]);
 
 		Self(bytes)
 	}
@@ -147,7 +146,7 @@ mod impl_serde {
 #[cfg(feature = "postgres")]
 mod postgres {
 	use bytes::BytesMut;
-	use postgres_types::{to_sql_checked, FromSql, IsNull, ToSql, Type};
+	use postgres_types::{FromSql, IsNull, ToSql, Type, to_sql_checked};
 
 	use super::*;
 
@@ -193,12 +192,12 @@ mod protobuf {
 	use super::*;
 
 	use protopuffer::{
+		WireType,
 		bytes::BytesWrite,
 		decode::{DecodeError, DecodeMessage, FieldKind},
 		encode::{
 			EncodeError, EncodeMessage, FieldOpt, MessageEncoder, SizeBuilder,
 		},
-		WireType,
 	};
 
 	impl EncodeMessage for UniqueId {
@@ -249,21 +248,14 @@ mod protobuf {
 mod graphql {
 	use super::*;
 
-	use juniper::{
-		InputValue, ParseScalarResult, ScalarToken, ScalarValue, Value,
-	};
+	use juniper::{ParseScalarResult, ScalarToken, ScalarValue};
 
-	pub(crate) fn to_output<S: ScalarValue>(v: &UniqueId) -> Value<S> {
-		Value::scalar(v.to_string())
+	pub(crate) fn to_output<S: ScalarValue>(v: &UniqueId) -> S {
+		S::from_displayable(v)
 	}
 
-	pub(crate) fn from_input<S: ScalarValue>(
-		v: &InputValue<S>,
-	) -> Result<UniqueId, String> {
-		v.as_string_value()
-			.ok_or("Expected a string")?
-			.parse()
-			.map_err(|e: DecodeError| e.to_string())
+	pub(crate) fn from_input(v: &str) -> Result<UniqueId, String> {
+		v.parse().map_err(|e: DecodeError| e.to_string())
 	}
 
 	pub(crate) fn parse_token<S: ScalarValue>(
@@ -277,7 +269,7 @@ mod graphql {
 mod tests {
 
 	use super::*;
-	use serde_json::{from_str, from_value, Value};
+	use serde_json::{Value, from_str, from_value};
 
 	// abcdefghijklmnopqrstuvwxyz
 

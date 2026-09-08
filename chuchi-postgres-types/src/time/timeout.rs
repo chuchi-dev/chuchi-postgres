@@ -74,7 +74,7 @@ mod impl_serde {
 mod postgres {
 	use super::*;
 	use bytes::BytesMut;
-	use postgres_types::{to_sql_checked, FromSql, IsNull, ToSql, Type};
+	use postgres_types::{FromSql, IsNull, ToSql, Type, to_sql_checked};
 
 	impl ToSql for Timeout {
 		fn to_sql(

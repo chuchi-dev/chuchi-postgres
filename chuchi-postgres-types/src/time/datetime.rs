@@ -4,10 +4,10 @@ use std::fmt;
 use std::ops::{Add, Sub};
 use std::time::{Duration as StdDuration, SystemTime};
 
-use chrono::format::ParseError;
-use chrono::offset::TimeZone;
 use chrono::Duration;
 use chrono::Utc;
+use chrono::format::ParseError;
+use chrono::offset::TimeZone;
 
 /// A DateTime in the utc timezone
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -162,7 +162,7 @@ mod postgres {
 	use bytes::BytesMut;
 	use postgres_protocol::types;
 	use postgres_types::{
-		accepts, to_sql_checked, FromSql, IsNull, ToSql, Type,
+		FromSql, IsNull, ToSql, Type, accepts, to_sql_checked,
 	};
 
 	impl ToSql for DateTime {
@@ -200,12 +200,12 @@ mod protobuf {
 	use super::*;
 
 	use protopuffer::{
+		WireType,
 		bytes::BytesWrite,
 		decode::{DecodeError, DecodeMessage, FieldKind},
 		encode::{
 			EncodeError, EncodeMessage, FieldOpt, MessageEncoder, SizeBuilder,
 		},
-		WireType,
 	};
 
 	impl EncodeMessage for DateTime {
@@ -261,20 +261,15 @@ mod protobuf {
 mod graphql {
 	use super::*;
 
-	use juniper::{
-		InputValue, ParseScalarResult, ScalarToken, ScalarValue, Value,
-	};
+	use juniper::{ParseScalarResult, ScalarToken, ScalarValue};
 
-	pub(crate) fn to_output<S: ScalarValue>(v: &DateTime) -> Value<S> {
-		Value::scalar(v.to_string())
+	pub(crate) fn to_output<S: ScalarValue>(v: &DateTime) -> S {
+		S::from_displayable(v)
 	}
 
-	pub(crate) fn from_input<S: ScalarValue>(
-		v: &InputValue<S>,
-	) -> Result<DateTime, String> {
-		v.as_string_value()
-			.and_then(|s| DateTime::parse_from_iso8601(s.as_ref()).ok())
-			.ok_or_else(|| "Expected a datetime in iso8601 format".into())
+	pub(crate) fn from_input(v: &str) -> Result<DateTime, String> {
+		DateTime::parse_from_iso8601(v)
+			.map_err(|_| "Expected a datetime in iso8601 format".into())
 	}
 
 	pub(crate) fn parse_token<S: ScalarValue>(
@@ -288,7 +283,7 @@ mod graphql {
 mod tests {
 
 	use super::*;
-	use serde_json::{from_str, from_value, Value};
+	use serde_json::{Value, from_str, from_value};
 
 	#[test]
 	fn serde_test() {

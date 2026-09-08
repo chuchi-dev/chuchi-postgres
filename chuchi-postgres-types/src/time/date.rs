@@ -6,8 +6,8 @@ use std::ops::{Add, Sub};
 use std::str::FromStr;
 use std::time::Duration as StdDuration;
 
-use chrono::format::ParseError;
 use chrono::Duration;
+use chrono::format::ParseError;
 use chrono::{TimeZone, Utc};
 
 /// A date in utc
@@ -167,7 +167,7 @@ mod postgres {
 	use bytes::BytesMut;
 	use postgres_protocol::types;
 	use postgres_types::{
-		accepts, to_sql_checked, FromSql, IsNull, ToSql, Type,
+		FromSql, IsNull, ToSql, Type, accepts, to_sql_checked,
 	};
 
 	impl ToSql for Date {
@@ -205,12 +205,12 @@ mod protobuf {
 	use super::*;
 
 	use protopuffer::{
+		WireType,
 		bytes::BytesWrite,
 		decode::{DecodeError, DecodeMessage, FieldKind},
 		encode::{
 			EncodeError, EncodeMessage, FieldOpt, MessageEncoder, SizeBuilder,
 		},
-		WireType,
 	};
 
 	impl EncodeMessage for Date {
@@ -266,20 +266,14 @@ mod protobuf {
 mod graphql {
 	use super::*;
 
-	use juniper::{
-		InputValue, ParseScalarResult, ScalarToken, ScalarValue, Value,
-	};
+	use juniper::{ParseScalarResult, ScalarToken, ScalarValue};
 
-	pub(crate) fn to_output<S: ScalarValue>(v: &Date) -> Value<S> {
-		Value::scalar(v.to_string())
+	pub(crate) fn to_output<S: ScalarValue>(v: &Date) -> S {
+		S::from_displayable(v)
 	}
 
-	pub(crate) fn from_input<S: ScalarValue>(
-		v: &InputValue<S>,
-	) -> Result<Date, String> {
-		v.as_string_value()
-			.and_then(|s| Date::from_str(s.as_ref()).ok())
-			.ok_or_else(|| "Expected a date y-m-d".into())
+	pub(crate) fn from_input(v: &str) -> Result<Date, String> {
+		Date::from_str(v).map_err(|_| "Expected a date y-m-d".into())
 	}
 
 	pub(crate) fn parse_token<S: ScalarValue>(
@@ -292,7 +286,7 @@ mod graphql {
 #[cfg(all(test, feature = "serde"))]
 mod tests {
 	use super::*;
-	use serde_json::{from_str, from_value, Value};
+	use serde_json::{Value, from_str, from_value};
 
 	#[test]
 	fn serde_test() {
