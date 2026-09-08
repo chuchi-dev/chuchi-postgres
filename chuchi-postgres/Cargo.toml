@@ -1,7 +1,7 @@
 [package]
 name = "chuchi-postgres"
 description = "A wrapper around tokio-postgres to simplify working with Postgres databases."
-version = "0.2.4"
+version = "0.3.0"
 authors = ["Sören Meier <info@soerenmeier.ch>"]
 homepage = "https://chuchi.dev/"
 repository = "https://github.com/chuchi-dev/chuchi-postgres"
@@ -13,9 +13,6 @@ rust-version = "1.85"
 crypto-cipher = ["crypto/cipher", "crypto/b64", "crypto/postgres"]
 crypto-signature = ["crypto/signature", "crypto/b64", "crypto/postgres"]
 crypto-token = ["crypto/b64", "crypto/postgres"]
-crypto-2-cipher = ["crypto_2/cipher", "crypto_2/b64", "crypto_2/postgres"]
-crypto-2-signature = ["crypto_2/signature", "crypto_2/b64", "crypto_2/postgres"]
-crypto-2-token = ["crypto_2/b64", "crypto_2/postgres"]
 json = [
 	"dep:serde_json",
 	"tokio-postgres/with-serde_json-1",
@@ -23,8 +20,8 @@ json = [
 	"types/json",
 ]
 email = ["dep:email_address"]
-protobuf = ["dep:fire-protobuf", "types/protobuf"]
-graphql = ["dep:juniper", "types/juniper"]
+protobuf = ["dep:protopuffer", "types/protobuf"]
+juniper_0_17 = ["dep:juniper", "types/juniper_0_17"]
 chuchi = ["dep:chuchi"]
 
 [dependencies]
@@ -35,22 +32,21 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", optional = true }
 chrono = "0.4.30"
 chuchi-postgres-derive = { version = "0.1.0", path = "../chuchi-postgres-derive" }
-rand = "0.8"
-base64 = "0.22"
+rand = "0.10"
+base64 = "0.23"
 bytes = "1.0"
-crypto = { package = "chuchi-crypto", version = "0.1.0", optional = true }
-crypto_2 = { package = "chuchi-crypto", version = "0.2.0-pre.1", optional = true }
+crypto = { package = "chuchi-crypto", version = "0.2.0", optional = true }
 email_address = { version = "0.2", optional = true }
-fire-protobuf = { version = "0.1.0", optional = true }
-juniper = { version = "0.16", default-features = false, optional = true }
+protopuffer = { version = "0.1.0", optional = true }
+juniper = { version = "0.17", default-features = false, optional = true }
 tracing = "0.1"
 deadpool-postgres = "0.14.0"
-thiserror = "1.0.58"
-types = { package = "chuchi-postgres-types", version = "0.1.0", path = "../chuchi-postgres-types", features = [
+thiserror = "2.0.20"
+types = { package = "chuchi-postgres-types", version = "0.2.0", path = "../chuchi-postgres-types", features = [
 	"postgres",
 	"serde",
 ] }
-deadpool = "0.12"
+deadpool = "0.13"
 futures-util = "0.3.14"
 pin-project-lite = "0.2.14"
 chuchi = { version = "0.1", optional = true }

@@ -33,4 +33,3 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub mod macros;
 
 mod impl_crypto;
-mod impl_crypto_2;
